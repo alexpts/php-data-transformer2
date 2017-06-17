@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "26d42b78cbab82603c0955306e67970b",
+    "content-hash": "b97060081175fd43cc771710935f13f1",
     "packages": [
         {
             "name": "alexpts/php-hydrator",
-            "version": "dev-only-hydrator",
+            "version": "1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/alexpts/php-hydrator.git",
-                "reference": "f5f8259eecdb95dd99dc26521d7adacd773a46ce"
+                "reference": "21965a4e156844cafe9eaf52c0a18a639c4a3eab"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/alexpts/php-hydrator/zipball/f5f8259eecdb95dd99dc26521d7adacd773a46ce",
-                "reference": "f5f8259eecdb95dd99dc26521d7adacd773a46ce",
+                "url": "https://api.github.com/repos/alexpts/php-hydrator/zipball/21965a4e156844cafe9eaf52c0a18a639c4a3eab",
+                "reference": "21965a4e156844cafe9eaf52c0a18a639c4a3eab",
                 "shasum": ""
             },
             "require": {
@@ -53,7 +53,7 @@
                 "model",
                 "transform"
             ],
-            "time": "2017-06-17 06:20:46"
+            "time": "2017-06-17T10:14:10+00:00"
         }
     ],
     "packages-dev": [
@@ -1557,9 +1557,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "alexpts/php-hydrator": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
