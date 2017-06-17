@@ -94,7 +94,7 @@ class DataTransformer
 
     protected function extractRefValue(array $refRules, $value, array $rule): array
     {
-        if (array_key_exists('collection', $rule['ref']) && $rule['ref']['collection']) {
+        if (array_key_exists('collection', $rule['ref']) && $rule['ref']['collection'] === true) {
             $refDTO = array_map(function($item) use ($refRules) {
                 return $this->hydratorService->extract($item, $refRules);
             }, $value);
