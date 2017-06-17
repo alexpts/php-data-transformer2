@@ -1,0 +1,35 @@
+{
+  "name": "alexpts/php-data-transformer2",
+  "description": "Convert model to dto, convert dto to model",
+  "homepage": "https://github.com/alexpts/php-data-transformer2",
+  "license": "MIT",
+  "type": "library",
+  "keywords": [
+    "model",
+    "converter",
+    "transform",
+    "dto",
+    "data",
+    "mapper"
+  ],
+  "authors": [
+    {
+      "name": "Alexpts",
+      "email": "alexpts3@gmail.com"
+    }
+  ],
+  "minimum-stability": "stable",
+  "require": {
+    "php": "^7.1",
+    "alexpts/php-hydrator": "dev-only-hydrator"
+  },
+  "require-dev": {
+    "fzaninotto/faker": "^1.6",
+    "phpunit/phpunit": "^6.2"
+  },
+  "autoload": {
+    "psr-0": {
+      "PTS\\DataTransformer": "src"
+    }
+  }
+}
