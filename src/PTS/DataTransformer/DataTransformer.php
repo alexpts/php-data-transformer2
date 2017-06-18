@@ -4,7 +4,7 @@ namespace PTS\DataTransformer;
 
 use PTS\Hydrator\HydratorService;
 
-class DataTransformer
+class DataTransformer implements DataTransformerInterface
 {
     /** @var HydratorService */
     protected $hydratorService;
