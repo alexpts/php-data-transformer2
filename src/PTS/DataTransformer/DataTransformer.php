@@ -66,6 +66,17 @@ class DataTransformer implements DataTransformerInterface
         return $refModel;
     }
 
+    public function toDtoCollection(array $models, string $mapName = 'dto', array $excludeFields = []): array
+    {
+        $collection = [];
+        foreach ($models as $key => $model) {
+            $dto = $this->toDTO($model, $mapName, $excludeFields);
+            $collection[$key] = $dto;
+        }
+
+        return $collection;
+    }
+
     public function toDTO($model, string $mapName = 'dto', array $excludeFields = []): array
     {
         $rules = $this->mapsManager->getMap(get_class($model), $mapName);

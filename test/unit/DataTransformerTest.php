@@ -229,4 +229,33 @@ class DataTransformerTest extends TestCase
             ]
         ]);
     }
+
+    public function testToDtoCollection()
+    {
+        $model1 = $this->createUser();
+        $model2 = $this->createUser();
+        $models = [$model1, $model2];
+
+        $dtoCollection = $this->dataTransformer->toDtoCollection($models);
+        $this->assertCount(2, $dtoCollection);
+
+        $this->assertEquals([
+            'id' => $model1->getId(),
+            'creAt' => $model1->getCreAt(),
+            'name' => $model1->getName(),
+            'login' => $model1->getLogin(),
+            'active' => $model1->isActive(),
+            'email' => $model1->getEmail(),
+        ], $dtoCollection[0]);
+
+        $this->assertEquals([
+            'id' => $model2->getId(),
+            'creAt' => $model2->getCreAt(),
+            'name' => $model2->getName(),
+            'login' => $model2->getLogin(),
+            'active' => $model2->isActive(),
+            'email' => $model2->getEmail(),
+        ], $dtoCollection[1]);
+    }
+
 }
