@@ -50,6 +50,14 @@ $dto = $dataTransformer->toDTO($model);
 $shortFormatDto = $dataTransformer->toDTO($model, 'short.dto');
 ```
 
+### Коллекция моделей
+Небольшой сахар, чтобы перевести коллекцию однотипных моделей в коллекцию DTO:
+```php
+$mapName = 'dto';
+$excludedFields = [];
+$dtoCollection = $dataTransformer->toDtoCollection($models, $mapName, $excludedFields);
+```
+
 ### Вложенные модели
 Если свойство модели представлено другой моделью или коллекцией моделей, то можно рекурсивно извреч/заполнить модель.
 Для этого в схеме маппинга нужно использовать ключ `ref`.
