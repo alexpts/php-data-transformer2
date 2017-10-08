@@ -34,9 +34,8 @@ class DataTransformer implements DataTransformerInterface
     protected function resolveRefHydrate(array $dto, array $rules): array
     {
         foreach ($dto as $key => $value) {
-            $rule = $rules[$key];
-
-            if ($value !== null && array_key_exists('ref', $rule)) {
+            if ($value !== null && array_key_exists($key, $rules) && array_key_exists('ref', $rules[$key])) {
+                $rule = $rules[$key];
                 $refRules = $this->mapsManager->getMap($rule['ref']['model'], $rule['ref']['map']);
                 $dto[$key] = $this->hydrateRefValue($refRules, $value, $rule);
             }
