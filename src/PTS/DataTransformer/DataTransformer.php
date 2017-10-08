@@ -35,13 +35,16 @@ class DataTransformer implements DataTransformerInterface
     {
         foreach ($dto as $key => $value) {
             if ($value !== null && array_key_exists($key, $rules) && array_key_exists('ref', $rules[$key])) {
-                $rule = $rules[$key];
-                $refRules = $this->mapsManager->getMap($rule['ref']['model'], $rule['ref']['map']);
-                $dto[$key] = $this->hydrateRefValue($refRules, $value, $rule);
+                $dto[$key] = $this->hydrateRefValue($this->getRefRules($rules[$key]), $value, $rules[$key]);
             }
         }
 
         return $dto;
+    }
+
+    protected function getRefRules(array $rule)
+    {
+        return $this->mapsManager->getMap($rule['ref']['model'], $rule['ref']['map']);
     }
 
     /**
