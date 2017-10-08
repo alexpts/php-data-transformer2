@@ -34,12 +34,17 @@ class DataTransformer implements DataTransformerInterface
     protected function resolveRefHydrate(array $dto, array $rules): array
     {
         foreach ($dto as $key => $value) {
-            if ($value !== null && array_key_exists($key, $rules) && array_key_exists('ref', $rules[$key])) {
+            if ($value !== null && $this->checkRuleForHydrate($rules, $key)) {
                 $dto[$key] = $this->hydrateRefValue($this->getRefRules($rules[$key]), $value, $rules[$key]);
             }
         }
 
         return $dto;
+    }
+
+    protected function checkRuleForHydrate(array $rules, string $key): bool
+    {
+        return array_key_exists($key, $rules) && array_key_exists('ref', $rules[$key]);
     }
 
     protected function getRefRules(array $rule)
@@ -94,8 +99,8 @@ class DataTransformer implements DataTransformerInterface
     protected function resolveRefExtract(array $dto, array $rules): array
     {
         foreach ($dto as $key => $value) {
-            $rule = $rules[$key];
-            if ($value !== null && array_key_exists('ref', $rule)) {
+            if ($value !== null && $this->checkRuleForHydrate($rules, $key)) {
+                $rule = $rules[$key];
                 $refRules = $this->mapsManager->getMap($rule['ref']['model'], $rule['ref']['map']);
                 $refDTO = $this->extractRefValue($refRules, $value, $rule);
                 $dto[$key] = $refDTO;
