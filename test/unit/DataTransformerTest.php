@@ -119,7 +119,7 @@ class DataTransformerTest extends TestCase
         ], $dto);
     }
 
-    public function testToDtoCollection()
+    public function testToDtoCollection(): void
     {
         $model1 = $this->createUser();
         $model2 = $this->createUser();
@@ -145,6 +145,38 @@ class DataTransformerTest extends TestCase
             'active' => $model2->isActive(),
             'email' => $model2->getEmail(),
         ], $dtoCollection[1]);
+    }
+
+    public function testToModelsCollection(): void
+    {
+        $dtoCollection = [
+            [
+                'id' => 1,
+                'creAt' => new \DateTime,
+                'name' => 'Alex',
+                'active' => true,
+            ],
+            [
+                'id' => 2,
+                'creAt' => new \DateTime,
+                'name' => 'Bob',
+                'active' => false,
+            ]
+        ];
+
+        /** @var UserModel[] $models */
+        $models = $this->dataTransformer->toModelsCollection($dtoCollection, UserModel::class);
+        $this->assertCount(2, $models);
+
+        $this->assertInstanceOf(UserModel::class, $models[0]);
+        $this->assertEquals(1, $models[0]->getId());
+        $this->assertEquals('Alex', $models[0]->getName());
+        $this->assertEquals(true, $models[0]->isActive());
+
+        $this->assertInstanceOf(UserModel::class, $models[1]);
+        $this->assertEquals(2, $models[1]->getId());
+        $this->assertEquals('Bob', $models[1]->getName());
+        $this->assertEquals(false, $models[1]->isActive());
     }
 
 }

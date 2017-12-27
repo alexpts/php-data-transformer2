@@ -24,9 +24,22 @@ class DataTransformer implements DataTransformerInterface
         return $this->hydratorService->hydrate($dto, $class, $rules);
     }
 
+    public function toModelsCollection(array $dtoCollection, string $class, string $mapName = 'dto'): array
+    {
+        $rules = $this->mapsManager->getMap($class, $mapName);
+
+        $models = [];
+        foreach ($dtoCollection as $dto) {
+            $dto = $this->resolveRefHydrate($dto, $rules);
+            $models[] = $this->hydratorService->hydrate($dto, $class, $rules);
+        }
+
+        return $models;
+    }
+
     public function fillModel(array $dto, $model, string $mapName = 'dto'): void
     {
-        $rules = $this->mapsManager->getMap(get_class($model), $mapName);
+        $rules = $this->mapsManager->getMap(\get_class($model), $mapName);
         $dto = $this->resolveRefHydrate($dto, $rules);
         $this->hydratorService->hydrateModel($dto, $model, $rules);
     }
