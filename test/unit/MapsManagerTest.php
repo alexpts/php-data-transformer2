@@ -19,7 +19,8 @@ class MapsManagerTest extends TestCase
     public function testSetMapDir(): void
     {
         $this->manager->setMapDir('model.user', __DIR__ . '/data');
-        self::assertNotNull(1, $this->manager->getMap('model.user'));
+        $result = $this->manager->getMap('model.user');
+        self::assertNotNull($result);
     }
 
     public function testGetMap(): void

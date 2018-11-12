@@ -25,15 +25,8 @@
 Все значения \DateTime нужно представить в виде строки в формате ISO8601.
 
 ```php
-$normalizeRule = new NormalizerRule;
-$extractor = new Extractor(new ExtractClosure, $normalizeRule);
-$hydrator = new Hydrator(new HydrateClosure, $normalizeRule);
-$hydratorService = new HydratorService($extractor, $hydrator);
-
-$mapsManager = new MapsManager;
-$mapsManager->setMapDir(UserModel::class, __DIR__ . '/data');
-
-$dataTransformer = new DataTransformer($hydratorService, $mapsManager);
+$dataTransformer = new DataTransformer;
+$dataTransformer->getMapsManager()->setMapDir(UserModel::class, __DIR__ . '/data');
 
 $model = $dataTransformer->toModel([
     'id' => 1,
@@ -54,12 +47,12 @@ $shortFormatDto = $dataTransformer->toDTO($model, 'short.dto');
 Небольшой сахар, чтобы перевести коллекцию однотипных моделей в коллекцию DTO:
 ```php
 $mapName = 'dto';
-$excludedFields = [];
+$excludedFields = ['name'];
 $dtoCollection = $dataTransformer->toDtoCollection($models, $mapName, $excludedFields);
 ```
 
 ### Вложенные модели
-Если свойство модели представлено другой моделью или коллекцией моделей, то можно рекурсивно извреч/заполнить модель.
+Если свойство модели представлено другой моделью или коллекцией моделей, то можно рекурсивно извлеч/заполнить модель.
 Для этого в схеме маппинга нужно использовать ключ `ref`.
 
 ```php

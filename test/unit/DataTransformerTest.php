@@ -5,12 +5,6 @@ use PHPUnit\Framework\TestCase;
 use PTS\DataTransformer\DataTransformer;
 use PTS\DataTransformer\MapsManager;
 use PTS\DataTransformer\UserModel;
-use PTS\Hydrator\ExtractClosure;
-use PTS\Hydrator\Extractor;
-use PTS\Hydrator\HydrateClosure;
-use PTS\Hydrator\Hydrator;
-use PTS\Hydrator\HydratorService;
-use PTS\Hydrator\NormalizerRule;
 
 require_once __DIR__ . '/data/UserModel.php';
 
@@ -23,20 +17,17 @@ class DataTransformerTest extends TestCase
 
     public function setUp(): void
     {
-        $normalizeRule = new NormalizerRule;
-        $extractor = new Extractor(new ExtractClosure, $normalizeRule);
-        $hydrator = new Hydrator(new HydrateClosure, $normalizeRule);
-        $hydratorService = new HydratorService($extractor, $hydrator);
-
-        $mapsManager = new MapsManager;
-        $mapsManager->setMapDir(UserModel::class, __DIR__ . '/data');
-
-        $this->dataTransformer = new DataTransformer($hydratorService, $mapsManager);
+        $this->dataTransformer = new DataTransformer;
+	    $this->dataTransformer->getMapsManager()->setMapDir(UserModel::class, __DIR__ . '/data');
 
         $this->faker = \Faker\Factory::create();
     }
 
-    protected function createUser(): UserModel
+	/**
+	 * @return UserModel
+	 * @throws Exception
+	 */
+	protected function createUser(): UserModel
     {
         $user = new UserModel;
         $user->setId(random_int(1, 9999));
@@ -55,7 +46,8 @@ class DataTransformerTest extends TestCase
 
     public function testGetMapsManager(): void
     {
-        $this->assertInstanceOf(MapsManager::class, $this->dataTransformer->getMapsManager());
+    	$mapsManager = $this->dataTransformer->getMapsManager();
+        $this->assertInstanceOf(MapsManager::class, $mapsManager);
     }
 
     public function testToModel(): void
@@ -90,7 +82,10 @@ class DataTransformerTest extends TestCase
         $this->assertEquals('Alex', $model->getName());
     }
 
-    public function testToDTO(): void
+	/**
+	 * @throws Exception
+	 */
+	public function testToDTO(): void
     {
         $model = $this->createUser();
         $dto = $this->dataTransformer->toDTO($model);
@@ -119,7 +114,10 @@ class DataTransformerTest extends TestCase
         ], $dto);
     }
 
-    public function testToDtoCollection(): void
+	/**
+	 * @throws Exception
+	 */
+	public function testToDtoCollection(): void
     {
         $model1 = $this->createUser();
         $model2 = $this->createUser();
@@ -178,5 +176,4 @@ class DataTransformerTest extends TestCase
         $this->assertEquals('Bob', $models[1]->getName());
         $this->assertEquals(false, $models[1]->isActive());
     }
-
 }

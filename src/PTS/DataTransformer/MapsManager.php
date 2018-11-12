@@ -16,13 +16,12 @@ class MapsManager
     public function getMap(string $entityName, string $mapName = 'dto'): array
     {
         $map = $this->tryCache($entityName, $mapName);
-        if (is_array($map)) {
+        if (\is_array($map)) {
             return $map;
         }
 
         $dir = $this->mapsDirs[$entityName];
         $map = $this->getByPath($dir . '/' . $mapName . '.php');
-
         $this->setCache($entityName, $mapName, $map);
 
         return $map;
@@ -35,11 +34,7 @@ class MapsManager
 
     protected function tryCache(string $entityName, string $mapName): ?array
     {
-        if (isset($this->cache[$entityName], $this->cache[$entityName][$mapName])) {
-            return $this->cache[$entityName][$mapName];
-        }
-
-        return null;
+        return $this->cache[$entityName][$mapName] ?? null;
     }
 
     protected function getByPath(string $path): array

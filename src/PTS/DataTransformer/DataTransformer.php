@@ -11,10 +11,10 @@ class DataTransformer implements DataTransformerInterface
     /** @var MapsManager */
     protected $mapsManager;
 
-    public function __construct(HydratorService $hydratorService, MapsManager $mapsManager)
+    public function __construct(HydratorService $hydratorService = null, MapsManager $mapsManager = null)
     {
-        $this->hydratorService = $hydratorService;
-        $this->mapsManager = $mapsManager;
+        $this->hydratorService = $hydratorService ?? new HydratorService;
+        $this->mapsManager = $mapsManager ?? new MapsManager;
     }
 
     public function toModel(array $dto, string $class, string $mapName = 'dto')
@@ -37,7 +37,7 @@ class DataTransformer implements DataTransformerInterface
         return $models;
     }
 
-    public function fillModel(array $dto, $model, string $mapName = 'dto'): void
+    public function fillModel(array $dto, object $model, string $mapName = 'dto'): void
     {
         $rules = $this->mapsManager->getMap(\get_class($model), $mapName);
         $dto = $this->resolveRefHydrate($dto, $rules);
@@ -60,7 +60,7 @@ class DataTransformer implements DataTransformerInterface
         return array_key_exists($key, $rules) && array_key_exists('ref', $rules[$key]);
     }
 
-    protected function getRefRules(array $rule)
+    protected function getRefRules(array $rule): array
     {
         return $this->mapsManager->getMap($rule['ref']['model'], $rule['ref']['map']);
     }
@@ -99,7 +99,7 @@ class DataTransformer implements DataTransformerInterface
 
     public function toDTO($model, string $mapName = 'dto', array $excludeFields = []): array
     {
-        $rules = $this->mapsManager->getMap(get_class($model), $mapName);
+        $rules = $this->mapsManager->getMap(\get_class($model), $mapName);
 
         foreach ($excludeFields as $field) {
             unset($rules[$field]);
@@ -123,17 +123,30 @@ class DataTransformer implements DataTransformerInterface
         return $dto;
     }
 
+	/**
+	 * @param array $refRules
+	 * @param object|object[] $value
+	 * @param array $rule
+	 *
+	 * @return array
+	 */
     protected function extractRefValue(array $refRules, $value, array $rule): array
     {
-        if (array_key_exists('collection', $rule['ref']) && $rule['ref']['collection'] === true) {
-            $refDTO = array_map(function($item) use ($refRules) {
-                return $this->hydratorService->extract($item, $refRules);
-            }, $value);
-        } else {
-            $refDTO = $this->hydratorService->extract($value, $refRules);
-        }
+	     return (array_key_exists('collection', $rule['ref']) && $rule['ref']['collection'] === true)
+		    ? $this->extractItems($value, $refRules)
+			: $this->extractItem($value, $refRules);
+    }
 
-        return $refDTO;
+	protected function extractItems(array $models, array $refRules): array
+	{
+		return array_map(function(object $model) use ($refRules) {
+			return $this->extractItem($model, $refRules);
+		}, $models);
+	}
+
+    protected function extractItem(object $model, array $refRules): array
+    {
+	    return $this->hydratorService->extract($model, $refRules);
     }
 
     public function getMapsManager(): MapsManager

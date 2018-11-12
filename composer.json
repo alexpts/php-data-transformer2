@@ -18,14 +18,17 @@
       "email": "alexpts3@gmail.com"
     }
   ],
+  "config": {
+    "optimize-autoloader": true
+  },
   "minimum-stability": "stable",
   "require": {
-    "php": "^7.1",
-    "alexpts/php-hydrator": "^1.0"
+    "php": "^7.2",
+    "alexpts/php-hydrator": "^2.0"
   },
   "require-dev": {
     "fzaninotto/faker": "^1.7",
-    "phpunit/phpunit": "^6.5"
+    "phpunit/phpunit": "^7.0.3"
   },
   "autoload": {
     "psr-0": {
