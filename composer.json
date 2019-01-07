@@ -28,11 +28,11 @@
   },
   "require-dev": {
     "fzaninotto/faker": "^1.7",
-    "phpunit/phpunit": "^7.0.3"
+    "phpunit/phpunit": "^7.5"
   },
   "autoload": {
-    "psr-0": {
-      "PTS\\DataTransformer": "src"
+    "psr-4": {
+      "PTS\\DataTransformer\\": "src"
     }
   }
 }

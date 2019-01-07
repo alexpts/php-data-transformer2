@@ -16,3 +16,16 @@ coding_style:
 
 tools:
     external_code_coverage: false
+
+build:
+    environment:
+        php:
+            version: 7.2
+
+    tests:
+        override:
+            -
+                command: 'vendor/bin/phpunit --configuration ./test/phpunit.xml --coverage-clover=test/clover.xml'
+                coverage:
+                    file: 'test/clover.xml'
+                    format: 'clover'
