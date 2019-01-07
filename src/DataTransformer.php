@@ -17,14 +17,14 @@ class DataTransformer implements DataTransformerInterface
         $this->mapsManager = $mapsManager ?? new MapsManager;
     }
 
-    public function toModel(array $dto, string $class, string $mapName = 'dto')
+    public function toModel(string $class, array $dto, string $mapName = 'dto'): object
     {
         $rules = $this->mapsManager->getMap($class, $mapName);
         $dto = $this->resolveRefHydrate($dto, $rules);
         return $this->hydratorService->hydrate($dto, $class, $rules);
     }
 
-    public function toModelsCollection(array $dtoCollection, string $class, string $mapName = 'dto'): array
+    public function toModelsCollection(string $class, array $dtoCollection, string $mapName = 'dto'): array
     {
         $rules = $this->mapsManager->getMap($class, $mapName);
 
@@ -37,11 +37,13 @@ class DataTransformer implements DataTransformerInterface
         return $models;
     }
 
-    public function fillModel(array $dto, object $model, string $mapName = 'dto'): void
+    public function fillModel(object $model, array $dto, string $mapName = 'dto'): object
     {
         $rules = $this->mapsManager->getMap(\get_class($model), $mapName);
         $dto = $this->resolveRefHydrate($dto, $rules);
         $this->hydratorService->hydrateModel($dto, $model, $rules);
+
+        return $model;
     }
 
     protected function resolveRefHydrate(array $dto, array $rules): array

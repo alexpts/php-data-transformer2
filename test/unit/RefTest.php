@@ -36,6 +36,10 @@ class RefTest extends TestCase
         $this->faker = \Faker\Factory::create();
     }
 
+    /**
+     * @return UserModel
+     * @throws Exception
+     */
     protected function createUser(): UserModel
     {
         $user = new UserModel;
@@ -48,58 +52,67 @@ class RefTest extends TestCase
         return $user;
     }
 
+    /**
+     * @throws Exception
+     */
     public function testFillModelRefModel(): void
     {
         $model = new UserModel;
-        $this->dataTransformer->fillModel([
+        $this->dataTransformer->fillModel($model, [
             'id' => 1,
             'name' => 'Alex',
             'refModel' => [
                 'id' => 2,
-                'creAt' => new \DateTime,
+                'creAt' => new DateTime,
                 'name' => 'Alex2',
                 'active' => true,
             ]
-        ], $model, 'withRefs.map');
+        ], 'withRefs.map');
 
         $this->assertInstanceOf(UserModel::class, $model);
         $this->assertInstanceOf(UserModel::class, $model->refModel);
         $this->assertEquals(2, $model->refModel->getId());
     }
 
+    /**
+     * @throws Exception
+     */
     public function testFillModelRefModelWithExtraFields(): void
     {
         $model = new UserModel;
-        $this->dataTransformer->fillModel([
+        $this->dataTransformer->fillModel($model, [
             'id' => 1,
             'name' => 'Alex',
             'extraFieldWithoutDeclarateTransform' => 3,
             'refModel' => [
                 'id' => 2,
-                'creAt' => new \DateTime,
+                'creAt' => new DateTime,
                 'name' => 'Alex2',
                 'active' => true,
             ]
-        ], $model, 'withRefs.map');
+        ], 'withRefs.map');
 
         $this->assertInstanceOf(UserModel::class, $model);
         $this->assertInstanceOf(UserModel::class, $model->refModel);
         $this->assertEquals(2, $model->refModel->getId());
     }
 
+    /**
+     * @throws Exception
+     */
     public function testToModelRefModel(): void
     {
         /** @var UserModel $model */
-        $model = $this->dataTransformer->toModel([
+        $model = $this->dataTransformer->toModel(UserModel::class, [
             'id' => 1,
             'name' => 'Alex',
             'refModel' => [
                 'id' => 2,
-                'creAt' => new \DateTime,
+                'creAt' => new DateTime,
                 'name' => 'Alex2',
                 'active' => true,
             ]
-        ], UserModel::class, 'withRefs.map');
+        ], 'withRefs.map');
 
         $this->assertInstanceOf(UserModel::class, $model);
         $this->assertInstanceOf(UserModel::class, $model->refModel);
@@ -109,7 +122,7 @@ class RefTest extends TestCase
     public function testToModelRefModels(): void
     {
         /** @var UserModel $model */
-        $model = $this->dataTransformer->toModel([
+        $model = $this->dataTransformer->toModel(UserModel::class, [
             'id' => 1,
             'name' => 'Alex',
             'refModels' => [
@@ -122,7 +135,7 @@ class RefTest extends TestCase
                     'name' => 'Alex3',
                 ]
             ]
-        ], UserModel::class, 'withRefs.map');
+        ], 'withRefs.map');
 
         $this->assertCount(2, $model->refModels);
         $this->assertInstanceOf(UserModel::class, $model->refModels[0]);
@@ -131,7 +144,10 @@ class RefTest extends TestCase
         $this->assertEquals(3, $model->refModels[1]->getId());
     }
 
-    public function testToDtoRefModel()
+    /**
+     * @throws Exception
+     */
+    public function testToDtoRefModel(): void
     {
         $model = $this->createUser();
         $model2= $this->createUser();
@@ -149,7 +165,10 @@ class RefTest extends TestCase
         ]);
     }
 
-    public function testToDtoRefModels()
+    /**
+     * @throws Exception
+     */
+    public function testToDtoRefModels(): void
     {
         $model = $this->createUser();
         $model2= $this->createUser();

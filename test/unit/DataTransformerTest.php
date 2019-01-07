@@ -50,15 +50,17 @@ class DataTransformerTest extends TestCase
         $this->assertInstanceOf(MapsManager::class, $mapsManager);
     }
 
+    /**
+     * @throws Exception
+     */
     public function testToModel(): void
     {
-        /** @var UserModel $model */
-        $model = $this->dataTransformer->toModel([
+        $model = $this->dataTransformer->toModel(UserModel::class, [
             'id' => 1,
-            'creAt' => new \DateTime,
+            'creAt' => new DateTime,
             'name' => 'Alex',
             'active' => 1,
-        ], UserModel::class);
+        ]);
 
         $this->assertInstanceOf(UserModel::class, $model);
         $this->assertEquals(true, $model->isActive());
@@ -66,15 +68,18 @@ class DataTransformerTest extends TestCase
         $this->assertEquals('Alex', $model->getName());
     }
 
+    /**
+     * @throws Exception
+     */
     public function testFillModel(): void
     {
         $model = new UserModel;
-        $this->dataTransformer->fillModel([
+        $model = $this->dataTransformer->fillModel($model, [
             'id' => 1,
-            'creAt' => new \DateTime,
+            'creAt' => new DateTime,
             'name' => 'Alex',
             'active' => 1,
-        ], $model);
+        ]);
 
         $this->assertInstanceOf(UserModel::class, $model);
         $this->assertEquals(true, $model->isActive());
@@ -145,25 +150,28 @@ class DataTransformerTest extends TestCase
         ], $dtoCollection[1]);
     }
 
+    /**
+     * @throws Exception
+     */
     public function testToModelsCollection(): void
     {
         $dtoCollection = [
             [
                 'id' => 1,
-                'creAt' => new \DateTime,
+                'creAt' => new DateTime,
                 'name' => 'Alex',
                 'active' => true,
             ],
             [
                 'id' => 2,
-                'creAt' => new \DateTime,
+                'creAt' => new DateTime,
                 'name' => 'Bob',
                 'active' => false,
             ]
         ];
 
         /** @var UserModel[] $models */
-        $models = $this->dataTransformer->toModelsCollection($dtoCollection, UserModel::class);
+        $models = $this->dataTransformer->toModelsCollection(UserModel::class, $dtoCollection);
         $this->assertCount(2, $models);
 
         $this->assertInstanceOf(UserModel::class, $models[0]);

@@ -28,12 +28,12 @@
 $dataTransformer = new DataTransformer;
 $dataTransformer->getMapsManager()->setMapDir(UserModel::class, __DIR__ . '/data');
 
-$model = $dataTransformer->toModel([
+$model = $dataTransformer->toModel(UserModel::class, [
     'id' => 1,
     'creAt' => new \DateTime,
     'name' => 'Alex',
     'active' => 1,
-], UserModel::class);
+]);
 
 $dto = $dataTransformer->toDTO($model);
 ```
@@ -82,7 +82,7 @@ return [
 ];
 
 // code file
-$model = $dataTransformer->toModel([
+$model = $dataTransformer->toModel(UserModel::class, [
     'id' => 1,
     'creAt' => new \DateTime,
     'name' => 'Alex',
@@ -91,9 +91,9 @@ $model = $dataTransformer->toModel([
         'id' => 2,
         'name' => 'refModel',
     ]
-], UserModel::class, 'deepDto');
+], 'deepDto');
 
-$model2 = $dataTransformer->toModel([
+$model2 = $dataTransformer->toModel(UserModel::class, [
     'id' => 1,
     'creAt' => new \DateTime,
     'name' => 'Alex',
@@ -108,5 +108,5 @@ $model2 = $dataTransformer->toModel([
             'name' => 'refModel',
         ]
     ]
-], UserModel::class, 'deepDto');
+], 'deepDto');
 ```
