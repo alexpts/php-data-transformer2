@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace PTS\DataTransformer;
 
 class MapsManager
@@ -31,7 +33,7 @@ class MapsManager
         $map = $this->cache[$entityName][$mapName] ?? null;
         if ($map === null) {
             $dir = $this->mapsDirs[$entityName];
-            $rules = require $dir . '/' . $mapName . '.php';
+            $rules = require $dir.'/'.$mapName.'.php';
             $this->cache[$entityName][$mapName] = $this->normalizer->normalize($rules);
         }
 
