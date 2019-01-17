@@ -48,7 +48,9 @@ $shortFormatDto = $dataTransformer->toDTO($model, 'short.dto');
 ```php
 $mapName = 'dto';
 $excludedFields = ['name'];
-$dtoCollection = $dataTransformer->toDtoCollection($models, $mapName, $excludedFields);
+$dtoCollection = $dataTransformer->toDtoCollection($models, $mapName, [
+	'excludeFields' => $excludedFields
+]);
 ```
 
 ### Вложенные модели
@@ -65,7 +67,14 @@ return [
     'active' => [
         'pipe' => ['boolval']
     ],
-    'email' => [],
+    'email' => [
+    	 'pipe' => [
+    	 	[
+    	 		'populate' => 'strtolower',
+    	 		'extract' => 'strtoupper'
+    	 	]
+    	 ]
+    ],
     'refModel' => [
         'ref' => [
             'model' => UserModel::class,

@@ -24,11 +24,12 @@
   "minimum-stability": "stable",
   "require": {
     "php": "^7.2",
-    "alexpts/php-hydrator": "^2.0"
+    "alexpts/php-hydrator": "^3.0"
   },
   "require-dev": {
     "fzaninotto/faker": "^1.7",
-    "phpunit/phpunit": "^7.5"
+    "phpunit/phpunit": "^7.5",
+    "blackfire/php-sdk": "^1.17"
   },
   "autoload": {
     "psr-4": {

@@ -32,7 +32,7 @@ class DataTransformerTest extends TestCase
         $user = new UserModel;
         $user->setId(random_int(1, 9999));
         $user->setActive($this->faker->randomElement([true, false]));
-        $user->setEmail($this->faker->email);
+        $user->setEmail(strtoupper($this->faker->email));
         $user->setLogin($this->faker->name);
         $user->setName($this->faker->name);
 
@@ -100,7 +100,7 @@ class DataTransformerTest extends TestCase
             'name' => $model->getName(),
             'login' => $model->getLogin(),
             'active' => $model->isActive(),
-            'email' => $model->getEmail(),
+            'email' => strtolower($model->getEmail()),
         ], $dto);
     }
 
@@ -110,7 +110,9 @@ class DataTransformerTest extends TestCase
         $model->setId(1);
         $model->setActive(false);
 
-        $dto = $this->dataTransformer->toDTO($model, 'dto', ['email', 'login']);
+        $dto = $this->dataTransformer->toDTO($model, 'dto', [
+            'excludeFields' => ['email', 'login']
+        ]);
         $this->assertEquals([
             'id' => 1,
             'creAt' => $model->getCreAt(),
@@ -131,22 +133,22 @@ class DataTransformerTest extends TestCase
         $dtoCollection = $this->dataTransformer->toDtoCollection($models);
         $this->assertCount(2, $dtoCollection);
 
-        $this->assertEquals([
+        $this->assertSame([
             'id' => $model1->getId(),
             'creAt' => $model1->getCreAt(),
             'name' => $model1->getName(),
             'login' => $model1->getLogin(),
             'active' => $model1->isActive(),
-            'email' => $model1->getEmail(),
+            'email' => strtolower($model1->getEmail()),
         ], $dtoCollection[0]);
 
-        $this->assertEquals([
+        $this->assertSame([
             'id' => $model2->getId(),
             'creAt' => $model2->getCreAt(),
             'name' => $model2->getName(),
             'login' => $model2->getLogin(),
             'active' => $model2->isActive(),
-            'email' => $model2->getEmail(),
+            'email' => strtolower($model2->getEmail()),
         ], $dtoCollection[1]);
     }
 
@@ -184,4 +186,5 @@ class DataTransformerTest extends TestCase
         $this->assertEquals('Bob', $models[1]->getName());
         $this->assertEquals(false, $models[1]->isActive());
     }
+
 }

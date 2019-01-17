@@ -6,6 +6,9 @@ use PTS\Hydrator\HydratorService;
 
 class DataTransformer implements DataTransformerInterface
 {
+    protected const FILTER_TYPE_POPULATE = 'populate';
+    protected const FILTER_TYPE_EXTRACT = 'extract';
+
     /** @var HydratorService */
     protected $hydratorService;
     /** @var MapsManager */
@@ -17,21 +20,28 @@ class DataTransformer implements DataTransformerInterface
         $this->mapsManager = $mapsManager ?? new MapsManager;
     }
 
+    public function getMapsManager(): MapsManager
+    {
+        return $this->mapsManager;
+    }
+
     public function toModel(string $class, array $dto, string $mapName = 'dto'): object
     {
-        $rules = $this->mapsManager->getMap($class, $mapName);
-        $dto = $this->resolveRefHydrate($dto, $rules);
-        return $this->hydratorService->hydrate($dto, $class, $rules);
+        $map = $this->mapsManager->getMap($class, $mapName);
+        $dto = $this->resolveRefPopulate($dto, $map['refs']);
+        $dto = $this->applyPipes($dto, $map['pipe']);
+        return $this->hydratorService->hydrate($dto, $class, $map['rules']);
     }
 
     public function toModelsCollection(string $class, array $dtoCollection, string $mapName = 'dto'): array
     {
-        $rules = $this->mapsManager->getMap($class, $mapName);
+        $map = $this->mapsManager->getMap($class, $mapName);
 
         $models = [];
         foreach ($dtoCollection as $dto) {
-            $dto = $this->resolveRefHydrate($dto, $rules);
-            $models[] = $this->hydratorService->hydrate($dto, $class, $rules);
+            $dto = $this->resolveRefPopulate($dto, $map['refs']);
+            $dto = $this->applyPipes($dto, $map['pipe']);
+            $models[] = $this->hydratorService->hydrate($dto, $class, $map['rules']);
         }
 
         return $models;
@@ -39,120 +49,94 @@ class DataTransformer implements DataTransformerInterface
 
     public function fillModel(object $model, array $dto, string $mapName = 'dto'): object
     {
-        $rules = $this->mapsManager->getMap(\get_class($model), $mapName);
-        $dto = $this->resolveRefHydrate($dto, $rules);
-        $this->hydratorService->hydrateModel($dto, $model, $rules);
+        $map = $this->mapsManager->getMap(\get_class($model), $mapName);
+        $dto = $this->resolveRefPopulate($dto, $map['refs']);
+        $dto = $this->applyPipes($dto, $map['pipe']);
+        $this->hydratorService->hydrateModel($dto, $model, $map['rules']);
 
         return $model;
     }
 
-    protected function resolveRefHydrate(array $dto, array $rules): array
-    {
-        foreach ($dto as $key => $value) {
-            if ($value !== null && $this->checkRuleForHydrate($rules, $key)) {
-                $dto[$key] = $this->hydrateRefValue($this->getRefRules($rules[$key]), $value, $rules[$key]);
-            }
-        }
-
-        return $dto;
-    }
-
-    protected function checkRuleForHydrate(array $rules, string $key): bool
-    {
-        return array_key_exists($key, $rules) && array_key_exists('ref', $rules[$key]);
-    }
-
-    protected function getRefRules(array $rule): array
-    {
-        return $this->mapsManager->getMap($rule['ref']['model'], $rule['ref']['map']);
-    }
-
-    /**
-     * @param array $refRules
-     * @param array $childDTO
-     * @param array $rule
-     *
-     * @return object|object[]
-     */
-    protected function hydrateRefValue(array $refRules, array $childDTO, array $rule)
-    {
-        if (array_key_exists('collection', $rule['ref']) && $rule['ref']['collection']) {
-            $refModels = array_map(function($item) use ($refRules, $rule) {
-                return $this->hydratorService->hydrate($item, $rule['ref']['model'], $refRules);
-            }, $childDTO);
-
-            return $refModels;
-        }
-
-        $refModel = $this->hydratorService->hydrate($childDTO, $rule['ref']['model'], $refRules);
-        return $refModel;
-    }
-
-    public function toDtoCollection(array $models, string $mapName = 'dto', array $excludeFields = []): array
+    public function toDtoCollection(array $models, string $mapName = 'dto', array $options = []): array
     {
         $collection = [];
         foreach ($models as $key => $model) {
-            $dto = $this->toDTO($model, $mapName, $excludeFields);
+            $dto = $this->toDTO($model, $mapName, $options);
             $collection[$key] = $dto;
         }
 
         return $collection;
     }
 
-    public function toDTO($model, string $mapName = 'dto', array $excludeFields = []): array
+    public function toDTO(object $model, string $mapName = 'dto', array $options = []): array
     {
-        $rules = $this->mapsManager->getMap(\get_class($model), $mapName);
+        $map = $this->mapsManager->getMap(\get_class($model), $mapName);
+        $excludeRules = $options['excludeFields'] ?? [];
 
-        foreach ($excludeFields as $field) {
-            unset($rules[$field]);
+        foreach ($excludeRules as $name) {
+            unset($map['pipe'][$name], $map['rules'][$name], $map['refs'][$name]);
         }
 
-        $dto = $this->hydratorService->extract($model, $rules);
-        return $this->resolveRefExtract($dto, $rules);
+        $dto = $this->hydratorService->extract($model, $map['rules']);
+        $dto = $this->applyPipes($dto, $map['pipe'], self::FILTER_TYPE_EXTRACT);
+        return $this->resolveRefExtract($dto, $map['refs']);
     }
 
-    protected function resolveRefExtract(array $dto, array $rules): array
+    protected function resolveRefExtract(array $dto, array $refsRules): array
     {
-        foreach ($dto as $key => $value) {
-            if ($value !== null && $this->checkRuleForHydrate($rules, $key)) {
-                $rule = $rules[$key];
-                $refRules = $this->mapsManager->getMap($rule['ref']['model'], $rule['ref']['map']);
-                $refDTO = $this->extractRefValue($refRules, $value, $rule);
-                $dto[$key] = $refDTO;
+        foreach ($refsRules as $name => $rule) {
+            $value = $dto[$name] ?? null;
+            if ($value !== null) {
+                $method = ($rule['collection'] ?? false) ? 'toDtoCollection' : 'toDTO';
+                $dto[$name] = $this->{$method}($value, $rule['map']);
             }
         }
 
         return $dto;
     }
 
-	/**
-	 * @param array $refRules
-	 * @param object|object[] $value
-	 * @param array $rule
-	 *
-	 * @return array
-	 */
-    protected function extractRefValue(array $refRules, $value, array $rule): array
+    /**
+     * Рекурсиовно все refs модели создает
+     *
+     * @param array $dto
+     * @param array $refsRules
+     *
+     * @return array
+     */
+    protected function resolveRefPopulate(array $dto, array $refsRules): array
     {
-	     return (array_key_exists('collection', $rule['ref']) && $rule['ref']['collection'] === true)
-		    ? $this->extractItems($value, $refRules)
-			: $this->extractItem($value, $refRules);
+        foreach ($refsRules as $name => $rule) {
+            $value = $dto[$name] ?? null;
+            if ($value !== null) {
+                $method = ($rule['collection'] ?? false) ? 'toModelsCollection' : 'toModel';
+                $dto[$name] = $this->{$method}($rule['model'], $value, $rule['map']);
+            }
+        }
+
+        return $dto;
     }
 
-	protected function extractItems(array $models, array $refRules): array
-	{
-		return array_map(function(object $model) use ($refRules) {
-			return $this->extractItem($model, $refRules);
-		}, $models);
-	}
-
-    protected function extractItem(object $model, array $refRules): array
+    protected function applyPipes(array $dto, array $pipes, $type = self::FILTER_TYPE_POPULATE): array
     {
-	    return $this->hydratorService->extract($model, $refRules);
+        foreach ($pipes as $name => $filters) {
+            $value = $dto[$name] ?? null;
+            $dto[$name] = $this->applyFilters($value, $filters, $type);
+        }
+
+        return $dto;
     }
 
-    public function getMapsManager(): MapsManager
+    protected function applyFilters($value, array $filters, $type)
     {
-        return $this->mapsManager;
+        foreach ($filters as $filter) {
+            if (\is_callable($filter)) {
+                $value = $filter($value);
+                continue;
+            }
+
+            $value = ($filter[$type] ?? false) ? $filter[$type]($value) : $value;
+        }
+
+        return $value;
     }
 }

@@ -7,38 +7,34 @@ class MapsManager
     protected $cache = [];
     /** @var array */
     protected $mapsDirs = [];
+    /** @var NormalizerInterface */
+    protected $normalizer;
+
+    public function __construct(NormalizerInterface $normalizer = null)
+    {
+        $this->normalizer = $normalizer ?? new Normalizer;
+    }
 
     public function setMapDir(string $entityName, string $dir): void
     {
         $this->mapsDirs[$entityName] = $dir;
     }
 
+    /**
+     * @param string $entityName
+     * @param string $mapName
+     *
+     * @return array[]
+     */
     public function getMap(string $entityName, string $mapName = 'dto'): array
     {
-        $map = $this->tryCache($entityName, $mapName);
-        if (\is_array($map)) {
-            return $map;
+        $map = $this->cache[$entityName][$mapName] ?? null;
+        if ($map === null) {
+            $dir = $this->mapsDirs[$entityName];
+            $rules = require $dir . '/' . $mapName . '.php';
+            $this->cache[$entityName][$mapName] = $this->normalizer->normalize($rules);
         }
 
-        $dir = $this->mapsDirs[$entityName];
-        $map = $this->getByPath($dir . '/' . $mapName . '.php');
-        $this->setCache($entityName, $mapName, $map);
-
-        return $map;
-    }
-
-    protected function setCache(string $entityName, string $mapName, array $map): void
-    {
-        $this->cache[$entityName][$mapName] = $map;
-    }
-
-    protected function tryCache(string $entityName, string $mapName): ?array
-    {
-        return $this->cache[$entityName][$mapName] ?? null;
-    }
-
-    protected function getByPath(string $path): array
-    {
-        return require $path;
+        return $this->cache[$entityName][$mapName];
     }
 }

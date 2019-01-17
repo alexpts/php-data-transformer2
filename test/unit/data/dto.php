@@ -6,7 +6,16 @@ return [
     'name' => [],
     'login' => [],
     'active' => [
-        'pipe' => ['boolval']
+        'pipe' => [
+            [
+                'populate' => 'boolval',
+                'extract' => 'boolval',
+            ]
+        ]
     ],
-    'email' => [],
+    'email' => [
+        'pipe' => [
+            'strtolower'
+        ]
+    ],
 ];

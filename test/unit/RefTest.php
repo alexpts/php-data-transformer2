@@ -10,7 +10,6 @@ use PTS\Hydrator\Extractor;
 use PTS\Hydrator\HydrateClosure;
 use PTS\Hydrator\Hydrator;
 use PTS\Hydrator\HydratorService;
-use PTS\Hydrator\NormalizerRule;
 
 require_once __DIR__ . '/data/UserModel.php';
 
@@ -23,9 +22,8 @@ class RefTest extends TestCase
 
     public function setUp(): void
     {
-        $normalizeRule = new NormalizerRule;
-        $extractor = new Extractor(new ExtractClosure, $normalizeRule);
-        $hydrator = new Hydrator(new HydrateClosure, $normalizeRule);
+        $extractor = new Extractor(new ExtractClosure);
+        $hydrator = new Hydrator(new HydrateClosure);
         $hydratorService = new HydratorService($extractor, $hydrator);
 
         $mapsManager = new MapsManager;
