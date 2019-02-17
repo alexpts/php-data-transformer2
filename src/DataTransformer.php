@@ -118,7 +118,8 @@ class DataTransformer implements DataTransformerInterface
 
     protected function applyPipes(array $dto, array $pipes, $type = self::FILTER_TYPE_POPULATE): array
     {
-        foreach ($pipes as $name => $filters) {
+        $fieldsPipes = array_intersect_key($pipes, $dto);
+        foreach ($fieldsPipes as $name => $filters) {
             $value = $dto[$name] ?? null;
             $dto[$name] = $this->applyFilters($value, $filters, $type);
         }
