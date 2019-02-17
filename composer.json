@@ -28,7 +28,7 @@
   },
   "require-dev": {
     "fzaninotto/faker": "^1.7",
-    "phpunit/phpunit": "^7.5",
+    "phpunit/phpunit": "^8.0",
     "blackfire/php-sdk": "^1.17"
   },
   "autoload": {

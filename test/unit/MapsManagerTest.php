@@ -11,7 +11,7 @@ class MapsManagerTest extends TestCase
     /** @var MapsManager */
     protected $manager;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->manager = new MapsManager;
     }
