@@ -22,21 +22,20 @@ class MapsManager
         $this->mapsDirs[$entityName] = $dir;
     }
 
-    /**
-     * @param string $entityName
-     * @param string $mapName
-     *
-     * @return array[]
-     */
     public function getMap(string $entityName, string $mapName = 'dto'): array
     {
         $map = $this->cache[$entityName][$mapName] ?? null;
         if ($map === null) {
             $dir = $this->mapsDirs[$entityName];
             $rules = require $dir.'/'.$mapName.'.php';
-            $this->cache[$entityName][$mapName] = $this->normalizer->normalize($rules);
+            $this->setMap($rules, $entityName, $mapName);
         }
 
         return $this->cache[$entityName][$mapName];
+    }
+
+    public function setMap(array $rules, string $entityName, $mapName = 'dto'): void
+    {
+        $this->cache[$entityName][$mapName] = $this->normalizer->normalize($rules);
     }
 }
