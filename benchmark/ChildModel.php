@@ -1,7 +1,7 @@
 <?php
 declare(strict_types = 1);
 
-class UserModel
+class ChildModel
 {
     protected $id;
     /** @var string */
@@ -12,8 +12,6 @@ class UserModel
     protected $creAt;
     /** @var bool */
     protected $active;
-    /** @var ChildModel|null  */
-    protected $child;
 
     public function __construct()
     {

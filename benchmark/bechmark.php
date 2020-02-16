@@ -7,6 +7,7 @@ use PTS\DataTransformer\DataTransformer;
 
 require_once __DIR__  .'/../vendor/autoload.php';
 require_once 'UserModel.php';
+require_once 'ChildModel.php';
 $faker = Faker::create();
 
 $iterations = $argv[1] ?? 1000;
@@ -14,7 +15,8 @@ $blackfire = $argv[2] ?? false;
 $iterations++;
 
 $service = new DataTransformer;
-$service->getMapsManager()->setMapDir(UserModel::class, __DIR__);
+$service->getMapsManager()->setMapDir(UserModel::class, __DIR__ . '/maps/' . UserModel::class);
+$service->getMapsManager()->setMapDir(ChildModel::class, __DIR__ . '/maps/' . ChildModel::class);
 
 $collectionDto = [];
 while ($iterations--) {
@@ -25,7 +27,7 @@ while ($iterations--) {
         'login' => $faker->name,
         'active' => $faker->numberBetween(0, 2),
         'email' => $faker->email,
-        'childModel' => [
+        'child' => [
             'id' => $faker->randomDigit,
             'creAt' => time(),
             'name' => $faker->unixTime(),

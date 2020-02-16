@@ -3,6 +3,8 @@
 namespace PTS\DataTransformer;
 
 use PTS\Hydrator\HydratorService;
+use function get_class;
+use function is_callable;
 
 class DataTransformer implements DataTransformerInterface
 {
@@ -28,8 +30,8 @@ class DataTransformer implements DataTransformerInterface
     public function toModel(string $class, array $dto, string $mapName = 'dto'): object
     {
         $map = $this->mapsManager->getMap($class, $mapName);
-        $dto = $this->resolveRefPopulate($dto, $map['refs']);
-        $dto = $this->applyPipes($dto, $map['pipe']);
+        $dto = $map['refs'] ? $this->resolveRefPopulate($dto, $map['refs']) : $dto;
+        $dto = $map['pipe'] ? $this->applyPipes($dto, $map['pipe']) : $dto;
         return $this->hydratorService->hydrate($dto, $class, $map['rules']);
     }
 
@@ -39,8 +41,8 @@ class DataTransformer implements DataTransformerInterface
 
         $models = [];
         foreach ($dtoCollection as $dto) {
-            $dto = $this->resolveRefPopulate($dto, $map['refs']);
-            $dto = $this->applyPipes($dto, $map['pipe']);
+            $dto = $map['refs'] ? $this->resolveRefPopulate($dto, $map['refs']) : $dto;
+            $dto = $map['pipe'] ? $this->applyPipes($dto, $map['pipe']) : $dto;
             $models[] = $this->hydratorService->hydrate($dto, $class, $map['rules']);
         }
 
@@ -49,9 +51,9 @@ class DataTransformer implements DataTransformerInterface
 
     public function fillModel(object $model, array $dto, string $mapName = 'dto'): object
     {
-        $map = $this->mapsManager->getMap(\get_class($model), $mapName);
-        $dto = $this->resolveRefPopulate($dto, $map['refs']);
-        $dto = $this->applyPipes($dto, $map['pipe']);
+        $map = $this->mapsManager->getMap(get_class($model), $mapName);
+        $dto = $map['refs'] ? $this->resolveRefPopulate($dto, $map['refs']) : $dto;
+        $dto = $map['pipe'] ? $this->applyPipes($dto, $map['pipe']) : $dto;
         $this->hydratorService->hydrateModel($dto, $model, $map['rules']);
 
         return $model;
@@ -70,7 +72,7 @@ class DataTransformer implements DataTransformerInterface
 
     public function toDTO(object $model, string $mapName = 'dto', array $options = []): array
     {
-        $map = $this->mapsManager->getMap(\get_class($model), $mapName);
+        $map = $this->mapsManager->getMap(get_class($model), $mapName);
         $excludeRules = $options['excludeFields'] ?? [];
 
         foreach ($excludeRules as $name) {
@@ -78,8 +80,8 @@ class DataTransformer implements DataTransformerInterface
         }
 
         $dto = $this->hydratorService->extract($model, $map['rules']);
-        $dto = $this->applyPipes($dto, $map['pipe'], self::FILTER_TYPE_EXTRACT);
-        return $this->resolveRefExtract($dto, $map['refs']);
+        $dto = $map['pipe'] ? $this->applyPipes($dto, $map['pipe'], self::FILTER_TYPE_EXTRACT) : $dto;
+        return $map['refs'] ? $this->resolveRefExtract($dto, $map['refs']) : $dto;
     }
 
     protected function resolveRefExtract(array $dto, array $refsRules): array
@@ -116,7 +118,7 @@ class DataTransformer implements DataTransformerInterface
         return $dto;
     }
 
-    protected function applyPipes(array $dto, array $pipes, $type = self::FILTER_TYPE_POPULATE): array
+    protected function applyPipes(array $dto, array $pipes, string $type = self::FILTER_TYPE_POPULATE): array
     {
         $fieldsPipes = array_intersect_key($pipes, $dto);
         foreach ($fieldsPipes as $name => $filters) {
@@ -127,10 +129,10 @@ class DataTransformer implements DataTransformerInterface
         return $dto;
     }
 
-    protected function applyFilters($value, array $filters, $type)
+    protected function applyFilters($value, array $filters, string $type)
     {
         foreach ($filters as $filter) {
-            if (\is_callable($filter)) {
+            if (is_callable($filter)) {
                 $value = $filter($value);
                 continue;
             }

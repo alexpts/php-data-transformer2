@@ -20,9 +20,9 @@ return [
             ]
         ]
     ],
-    'childModel' => [
+    'child' => [
         'ref' => [
-            'model' => 'UserModel',
+            'model' => 'ChildModel',
             'map' => 'dto'
         ]
     ]
