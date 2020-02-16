@@ -27,9 +27,9 @@
     "alexpts/php-hydrator": "^3.0"
   },
   "require-dev": {
-    "fzaninotto/faker": "^1.7",
-    "phpunit/phpunit": "^8.0",
-    "blackfire/php-sdk": "^1.17"
+    "fzaninotto/faker": "^1.9",
+    "phpunit/phpunit": "^8.5",
+    "blackfire/php-sdk": "^1.21"
   },
   "autoload": {
     "psr-4": {
