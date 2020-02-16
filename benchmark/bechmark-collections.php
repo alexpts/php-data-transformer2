@@ -42,10 +42,8 @@ if ($blackfire) {
 }
 $startTime = microtime(true);
 
-foreach ($collectionDto as $dto) {
-    $model = $service->toModel(UserModel::class, $dto);
-    $dto = $service->toDTO($model);
-}
+$models = $service->toModelsCollection(UserModel::class, $collectionDto);
+$collectionDto = $service->toDtoCollection($models);
 
 $diff = (microtime(true) - $startTime) * 1000;
 echo sprintf('%2.3f ms', $diff);
