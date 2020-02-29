@@ -15,8 +15,7 @@ $blackfire = $argv[2] ?? false;
 $iterations++;
 
 $service = new DataTransformer;
-$service->getMapsManager()->setMapDir(UserModel::class, __DIR__ . '/maps/' . UserModel::class);
-$service->getMapsManager()->setMapDir(ChildModel::class, __DIR__ . '/maps/' . ChildModel::class);
+$service->getMapsManager()->setDefaultMapDir(__DIR__ . '/maps/');
 
 $collectionDto = [];
 while ($iterations--) {

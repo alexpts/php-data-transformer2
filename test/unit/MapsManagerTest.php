@@ -44,4 +44,14 @@ class MapsManagerTest extends TestCase
         self::assertCount(0, $map2['refs']);
         self::assertSame($map, $map2);
     }
+
+    public function testGetMapFromDefaultDir(): void
+    {
+        $this->manager->setDefaultMapDir(__DIR__ . '/data');
+        $map = $this->manager->getMap('Namespace\UserModel');
+        self::assertCount(3, $map);
+        self::assertCount(6, $map['rules']);
+        self::assertCount(2, $map['pipe']);
+        self::assertCount(0, $map['refs']);
+    }
 }
