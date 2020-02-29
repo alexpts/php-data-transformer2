@@ -7,6 +7,10 @@
 [![Code Climate](https://codeclimate.com/github/alexpts/php-data-transformer2/badges/gpa.svg)](https://codeclimate.com/github/alexpts/php-data-transformer2)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/alexpts/php-data-transformer2/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/alexpts/php-data-transformer2/?branch=master)
 
+
+### Install
+`composer require alexpts/php-data-transformer2`
+
 Библиотека представляет собой более высокий уровень билбиотеки https://github.com/alexpts/php-hydrator.
 Расширяя ее возможности и упрощая работу за счет:
 - Декларативного описания правил преобразования
