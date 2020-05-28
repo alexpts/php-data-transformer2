@@ -1,4 +1,9 @@
 <?php
+/**
+ * @var MapsManager $this
+ */
+
+use PTS\DataTransformer\MapsManager;
 
 return [
     'id' => [],

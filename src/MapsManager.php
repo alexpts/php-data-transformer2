@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace PTS\DataTransformer;
 
+use Psr\Container\ContainerInterface;
+
 class MapsManager
 {
     protected array $cache = [];
@@ -10,11 +12,23 @@ class MapsManager
     protected array $mapsDirs = [];
     protected NormalizerInterface $normalizer;
     protected string $defaultMapsDirs = '';
+    protected ?ContainerInterface $container = null;
 
     public function __construct(NormalizerInterface $normalizer = null, string $dir = '')
     {
         $this->normalizer = $normalizer ?? new Normalizer;
         $this->setDefaultMapDir($dir);
+    }
+
+    public function setContainer(ContainerInterface $container): self
+    {
+    	$this->container = $container;
+    	return $this;
+    }
+
+    public function getContainer(): ?ContainerInterface
+    {
+    	return $this->container;
     }
 
     public function setDefaultMapDir(string $dir): void
@@ -32,12 +46,18 @@ class MapsManager
         $map = $this->cache[$entityName][$mapName] ?? null;
         if ($map === null) {
             $dir = $this->getMapDir($entityName);
-            $rules = require $dir.DIRECTORY_SEPARATOR.$mapName.'.php';
+	        $rules = $this->includeMap($dir.DIRECTORY_SEPARATOR.$mapName.'.php');
             $this->setMap($rules, $entityName, $mapName);
         }
 
         return $this->cache[$entityName][$mapName];
     }
+
+    protected function includeMap(string $file): array
+    {
+	    return require $file;
+    }
+
 
     public function getMapDir(string $entityName): string
     {

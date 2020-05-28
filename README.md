@@ -73,7 +73,7 @@ return [
     'email' => [
     	 'pipe' => [
     	 	[
-    	 		'populate' => 'strtolower',
+    	 		'populate' => 'strtolower', // any callable
     	 		'extract' => 'strtoupper'
     	 	]
     	 ]
@@ -122,3 +122,39 @@ $model2 = $dataTransformer->toModel(UserModel::class, [
     ]
 ], 'deepDto');
 ```
+
+
+### Логика в pipe обработчиках
+Обработчики pipe позволяют описывать callable методы и писать любую логику, которая будет применяться к значению.
+В pipe фильтрах можно кастить типы например. Либо шифровать поля перед записью в БД.
+В случае необходимости, чтобы вся логика маппинга была в 1 месте, вы может прокинуть любые зависимости через замыкание
+в функцию pipe, доставл ее из контейнера.
+
+```php
+<?php
+/**
+ * @var MapsManager $this
+ */
+
+use PTS\DataTransformer\MapsManager;
+
+$encrypter = $this->getContainer()->get('encrypter');
+
+return [
+    'id' => [],
+    'creAt' => [],
+    'name' => [],
+    'password' => [
+    	 'pipe' => [
+    	 	[
+    	 		'extract' => function(string $openPassword) use($encrypter) {
+					return $encrypter->encrypt($openPassword, false);
+				},
+				'populate' => static function(string $ePassword) use($encrypter) {
+					return $encrypter->decrypt($ePassword, false);
+				},
+			]
+		]
+	],
+
+];

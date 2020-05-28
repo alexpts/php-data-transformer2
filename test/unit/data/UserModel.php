@@ -3,22 +3,20 @@ declare(strict_types = 1);
 
 namespace PTS\DataTransformer;
 
+use DateTimeInterface;
+
 class UserModel
 {
     protected $id;
+    protected string $name = '';
     /** @var string */
-    protected $name;
-    /** @var string */
-    protected $login;
-    /** @var \DateTime */
-    protected $creAt;
-    /** @var bool */
-    protected $active;
+    protected string $login;
+    protected DateTimeInterface $creAt;
+    protected bool $active;
 
-    /** @var UserModel|null */
-    public $refModel;
+    public ?UserModel $refModel = null;
     /** @var UserModel[] */
-    public $refModels = [];
+    public array $refModels = [];
 
     public function __construct()
     {

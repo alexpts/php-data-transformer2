@@ -24,7 +24,8 @@
   "minimum-stability": "stable",
   "require": {
     "php": "^7.4",
-    "alexpts/php-hydrator": "^3.0"
+    "alexpts/php-hydrator": "^3.0",
+    "psr/container": "^1.0"
   },
   "require-dev": {
     "fzaninotto/faker": "^1.9",
