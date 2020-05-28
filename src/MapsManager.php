@@ -5,14 +5,11 @@ namespace PTS\DataTransformer;
 
 class MapsManager
 {
-    /** @var array */
-    protected $cache = [];
+    protected array $cache = [];
     /** @var string[] */
-    protected $mapsDirs = [];
-    /** @var NormalizerInterface */
-    protected $normalizer;
-    /** @var string */
-    protected $defaultMapsDirs = '';
+    protected array $mapsDirs = [];
+    protected NormalizerInterface $normalizer;
+    protected string $defaultMapsDirs = '';
 
     public function __construct(NormalizerInterface $normalizer = null, string $dir = '')
     {

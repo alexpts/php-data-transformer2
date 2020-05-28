@@ -16,7 +16,7 @@ class Normalizer implements NormalizerInterface
         ];
 
         foreach ($map['rules'] as $name => &$rule) {
-            $rule['prop'] = $rule['prop'] ?? $name;
+            $rule['prop'] ??= $name;
             $map['refs'][$name] = $rule['ref'] ?? null;
             $map['pipe'][$name] = $rule['pipe'] ?? null;
         }

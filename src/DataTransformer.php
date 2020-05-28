@@ -11,10 +11,8 @@ class DataTransformer implements DataTransformerInterface
     protected const FILTER_TYPE_POPULATE = 'populate';
     protected const FILTER_TYPE_EXTRACT = 'extract';
 
-    /** @var HydratorService */
-    protected $hydratorService;
-    /** @var MapsManager */
-    protected $mapsManager;
+    protected HydratorService $hydratorService;
+    protected MapsManager $mapsManager;
 
     public function __construct(HydratorService $hydratorService = null, MapsManager $mapsManager = null)
     {

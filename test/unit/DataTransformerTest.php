@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 
+use Faker\Factory;
 use PHPUnit\Framework\TestCase;
 use PTS\DataTransformer\DataTransformer;
 use PTS\DataTransformer\MapsManager;
@@ -10,17 +11,15 @@ require_once __DIR__ . '/data/UserModel.php';
 
 class DataTransformerTest extends TestCase
 {
-    /** @var DataTransformer */
-    protected $dataTransformer;
-    /** @var \Faker\Generator */
-    protected $faker;
+    protected DataTransformer $dataTransformer;
+    protected \Faker\Generator $faker;
 
     public function setUp(): void
     {
         $this->dataTransformer = new DataTransformer;
 	    $this->dataTransformer->getMapsManager()->setMapDir(UserModel::class, __DIR__ . '/data');
 
-        $this->faker = \Faker\Factory::create();
+        $this->faker = Factory::create();
     }
 
 	/**

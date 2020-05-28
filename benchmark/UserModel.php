@@ -5,7 +5,7 @@ class UserModel
 {
     protected $id;
     /** @var string */
-    protected $name;
+    protected string $name;
     /** @var string */
     protected $login;
     /** @var DateTime */

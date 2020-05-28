@@ -8,8 +8,7 @@ require_once __DIR__ . '/data/UserModel.php';
 
 class MapsManagerTest extends TestCase
 {
-    /** @var MapsManager */
-    protected $manager;
+    protected MapsManager $manager;
 
     public function setUp(): void
     {
