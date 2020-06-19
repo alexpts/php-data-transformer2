@@ -23,12 +23,11 @@ class RefTest extends TestCase
     {
         $extractor = new Extractor(new ExtractClosure);
         $hydrator = new Hydrator(new HydrateClosure);
-        $hydratorService = new HydratorService($extractor, $hydrator);
 
         $mapsManager = new MapsManager;
         $mapsManager->setMapDir(UserModel::class, __DIR__ . '/data');
 
-        $this->dataTransformer = new DataTransformer($hydratorService, $mapsManager);
+        $this->dataTransformer = new DataTransformer($extractor, $hydrator, $mapsManager);
 
         $this->faker = Factory::create();
     }
