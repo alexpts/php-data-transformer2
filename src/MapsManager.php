@@ -20,15 +20,15 @@ class MapsManager
         $this->setDefaultMapDir($dir);
     }
 
-    public function setContainer(ContainerInterface $container): self
+    public function setContainer(ContainerInterface $container): static
     {
-    	$this->container = $container;
-    	return $this;
+        $this->container = $container;
+        return $this;
     }
 
     public function getContainer(): ?ContainerInterface
     {
-    	return $this->container;
+        return $this->container;
     }
 
     public function setDefaultMapDir(string $dir): void
@@ -46,7 +46,7 @@ class MapsManager
         $map = $this->cache[$entityName][$mapName] ?? null;
         if ($map === null) {
             $dir = $this->getMapDir($entityName);
-	        $rules = $this->includeMap($dir.DIRECTORY_SEPARATOR.$mapName.'.php');
+            $rules = $this->includeMap($dir . DIRECTORY_SEPARATOR . $mapName . '.php');
             $this->setMap($rules, $entityName, $mapName);
         }
 
@@ -55,9 +55,8 @@ class MapsManager
 
     protected function includeMap(string $file): array
     {
-	    return require $file;
+        return require $file;
     }
-
 
     public function getMapDir(string $entityName): string
     {

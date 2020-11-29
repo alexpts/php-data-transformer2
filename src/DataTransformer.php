@@ -38,15 +38,15 @@ class DataTransformer implements DataTransformerInterface
         return $this->hydrator->hydrate($dto, $class, $map['rules']);
     }
 
-    public function toModelsCollection(string $class, iterable $dtoCollection, string $mapName = 'dto'): array
+    public function toModelsCollection(string $model, iterable $dtoCollection, string $mapType = 'dto'): array
     {
-        $map = $this->mapsManager->getMap($class, $mapName);
+        $map = $this->mapsManager->getMap($model, $mapType);
 
         $models = [];
         foreach ($dtoCollection as $dto) {
             $dto = $map['refs'] ? $this->resolveRefPopulate($dto, $map['refs']) : $dto;
             $dto = $map['pipe'] ? $this->applyPipes($dto, $map['pipe']) : $dto;
-            $models[] = $this->hydrator->hydrate($dto, $class, $map['rules']);
+            $models[] = $this->hydrator->hydrate($dto, $model, $map['rules']);
         }
 
         return $models;
@@ -54,7 +54,7 @@ class DataTransformer implements DataTransformerInterface
 
     public function fillModel(object $model, array $dto, string $mapName = 'dto'): object
     {
-        $map = $this->mapsManager->getMap(get_class($model), $mapName);
+        $map = $this->mapsManager->getMap($model::class, $mapName);
         $dto = $map['refs'] ? $this->resolveRefPopulate($dto, $map['refs']) : $dto;
         $dto = $map['pipe'] ? $this->applyPipes($dto, $map['pipe']) : $dto;
         $this->hydrator->hydrateModel($dto, $model, $map['rules']);
@@ -75,7 +75,7 @@ class DataTransformer implements DataTransformerInterface
 
     public function toDTO(object $model, string $mapName = 'dto', array $options = []): array
     {
-        $map = $this->mapsManager->getMap(get_class($model), $mapName);
+        $map = $this->mapsManager->getMap($model::class, $mapName);
         $excludeRules = $options['excludeFields'] ?? [];
 
         foreach ($excludeRules as $name) {
@@ -132,7 +132,7 @@ class DataTransformer implements DataTransformerInterface
         return $dto;
     }
 
-    protected function applyFilters($value, array $filters, string $type)
+    protected function applyFilters($value, array $filters, string $type): mixed
     {
         foreach ($filters as $filter) {
             if (is_callable($filter)) {

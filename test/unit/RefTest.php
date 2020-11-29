@@ -10,7 +10,6 @@ use PTS\Hydrator\ExtractClosure;
 use PTS\Hydrator\Extractor;
 use PTS\Hydrator\HydrateClosure;
 use PTS\Hydrator\Hydrator;
-use PTS\Hydrator\HydratorService;
 
 require_once __DIR__ . '/data/UserModel.php';
 
@@ -65,9 +64,9 @@ class RefTest extends TestCase
             ]
         ], 'withRefs.map');
 
-        $this->assertInstanceOf(UserModel::class, $model);
-        $this->assertInstanceOf(UserModel::class, $model->refModel);
-        $this->assertEquals(2, $model->refModel->getId());
+        static::assertInstanceOf(UserModel::class, $model);
+        static::assertInstanceOf(UserModel::class, $model->refModel);
+        static::assertEquals(2, $model->refModel->getId());
     }
 
     /**
@@ -88,9 +87,9 @@ class RefTest extends TestCase
             ]
         ], 'withRefs.map');
 
-        $this->assertInstanceOf(UserModel::class, $model);
-        $this->assertInstanceOf(UserModel::class, $model->refModel);
-        $this->assertEquals(2, $model->refModel->getId());
+        static::assertInstanceOf(UserModel::class, $model);
+        static::assertInstanceOf(UserModel::class, $model->refModel);
+        static::assertEquals(2, $model->refModel->getId());
     }
 
     /**
@@ -110,9 +109,9 @@ class RefTest extends TestCase
             ]
         ], 'withRefs.map');
 
-        $this->assertInstanceOf(UserModel::class, $model);
-        $this->assertInstanceOf(UserModel::class, $model->refModel);
-        $this->assertEquals(2, $model->refModel->getId());
+        static::assertInstanceOf(UserModel::class, $model);
+        static::assertInstanceOf(UserModel::class, $model->refModel);
+        static::assertEquals(2, $model->refModel->getId());
     }
 
     public function testToModelRefModels(): void
@@ -133,11 +132,11 @@ class RefTest extends TestCase
             ]
         ], 'withRefs.map');
 
-        $this->assertCount(2, $model->refModels);
-        $this->assertInstanceOf(UserModel::class, $model->refModels[0]);
-        $this->assertInstanceOf(UserModel::class, $model->refModels[1]);
-        $this->assertEquals(2, $model->refModels[0]->getId());
-        $this->assertEquals(3, $model->refModels[1]->getId());
+        static::assertCount(2, $model->refModels);
+        static::assertInstanceOf(UserModel::class, $model->refModels[0]);
+        static::assertInstanceOf(UserModel::class, $model->refModels[1]);
+        static::assertEquals(2, $model->refModels[0]->getId());
+        static::assertEquals(3, $model->refModels[1]->getId());
     }
 
     /**
@@ -151,7 +150,7 @@ class RefTest extends TestCase
         $model->refModel = $model2;
 
         $dto = $this->dataTransformer->toDTO($model, 'withRefs.map', ['refModels']);
-        $this->assertEquals($dto['refModel'], [
+        static::assertEquals($dto['refModel'], [
             'id' => $model2->getId(),
             'creAt' => $model2->getCreAt(),
             'name' => $model2->getName(),
@@ -173,8 +172,8 @@ class RefTest extends TestCase
         $model->refModels = [$model2, $model3];
 
         $dto = $this->dataTransformer->toDTO($model, 'withRefs.map', ['refModel']);
-        $this->assertCount(2, $dto['refModels']);
-        $this->assertEquals($dto['refModels'], [
+        static::assertCount(2, $dto['refModels']);
+        static::assertEquals($dto['refModels'], [
             [
                 'id' => $model2->getId(),
                 'creAt' => $model2->getCreAt(),
