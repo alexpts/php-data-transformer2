@@ -1,7 +1,5 @@
 # php-data-transformer2
 
-[![SensioLabsInsight](https://insight.sensiolabs.com/projects/de0407d9-12fe-4d3d-a688-9b29b10a0e46/big.png)](https://insight.sensiolabs.com/projects/de0407d9-12fe-4d3d-a688-9b29b10a0e46)
-
 [![Build Status](https://travis-ci.org/alexpts/php-data-transformer2.svg?branch=master)](https://travis-ci.org/alexpts/php-data-transformer2)
 [![Code Coverage](https://scrutinizer-ci.com/g/alexpts/php-data-transformer2/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/alexpts/php-data-transformer2/?branch=master)
 [![Code Climate](https://codeclimate.com/github/alexpts/php-data-transformer2/badges/gpa.svg)](https://codeclimate.com/github/alexpts/php-data-transformer2)
