@@ -166,9 +166,10 @@ return [
             'strtolower'
         ],
 ];
+```
 
-
-### migrates
+### migration
 
 [update 5 to 6](https://github.com/alexpts/php-data-transformer2/blob/master/docs/migrate5to6.md)
+
 

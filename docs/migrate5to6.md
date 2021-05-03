@@ -13,8 +13,6 @@ $mapOld = [
         ]
     ],
     'email' => [
-        'pipe-populate' => ['strtolower'],
-        'pipe-extract' => ['strtolower'],
         'pipe' => [
             'strtolower'
         ]
