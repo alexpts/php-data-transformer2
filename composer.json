@@ -25,12 +25,12 @@
   "require": {
     "php": "^8.0",
     "alexpts/php-hydrator": "^4.0",
-    "psr/container": "^1.0"
+    "psr/container": "^2.0"
   },
   "require-dev": {
     "fzaninotto/faker": "dev-master",
-    "phpunit/phpunit": "^9.4",
-    "blackfire/php-sdk": "^1.23"
+    "phpunit/phpunit": "^9.5",
+    "blackfire/php-sdk": "^1.25"
   },
   "autoload": {
     "psr-4": {

@@ -6,14 +6,14 @@ use Psr\Container\ContainerInterface;
 class Container implements ContainerInterface
 {
 
-	public function get($id)
-	{
-		$mock = 1;
-		return $mock;
-	}
+    public function get(string $id)
+    {
+        $mock = 1;
+        return $mock;
+    }
 
-	public function has($id)
-	{
-		return true;
-	}
+    public function has(string $id): bool
+    {
+        return true;
+    }
 }

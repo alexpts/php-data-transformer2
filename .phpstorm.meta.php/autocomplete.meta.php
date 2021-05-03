@@ -2,7 +2,7 @@
 
 namespace PHPSTORM_META {
 
-	override(\PTS\DataTransformer\DataTransformerInterface::toModel(0), map([
+    override(\PTS\DataTransformer\DataTransformerInterface::toModel(0), map([
         "" => "@",
     ]));
 }

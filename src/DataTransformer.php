@@ -18,12 +18,15 @@ class DataTransformer implements DataTransformerInterface
     protected HydratorInterface $hydrator;
     protected MapsManager $mapsManager;
 
-	public function __construct(ExtractorInterface $extractor = null, HydratorInterface $hydrator = null, MapsManager $mapsManager = null)
-	{
-		$this->extractor = $extractor ?? new Extractor;
-		$this->hydrator = $hydrator ?? new Hydrator;
-		$this->mapsManager = $mapsManager ?? new MapsManager;
-	}
+    public function __construct(
+        ExtractorInterface $extractor = null,
+        HydratorInterface $hydrator = null,
+        MapsManager $mapsManager = null
+    ) {
+        $this->extractor = $extractor ?? new Extractor;
+        $this->hydrator = $hydrator ?? new Hydrator;
+        $this->mapsManager = $mapsManager ?? new MapsManager;
+    }
 
     public function getMapsManager(): MapsManager
     {

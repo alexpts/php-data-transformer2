@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace PTS\DataTransformer;
 
-
 class Normalizer implements NormalizerInterface
 {
 
