@@ -8,7 +8,8 @@ return [
     'name' => [],
     'login' => [],
     'active' => [
-        'pipe' => ['boolval']
+        'pipe-populate' => ['boolval'],
+        'pipe-extract' => ['boolval'],
     ],
     'email' => [],
     'refModel' => [
