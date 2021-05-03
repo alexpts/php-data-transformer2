@@ -6,14 +6,9 @@ use PTS\Hydrator\Extractor;
 use PTS\Hydrator\ExtractorInterface;
 use PTS\Hydrator\Hydrator;
 use PTS\Hydrator\HydratorInterface;
-use function get_class;
-use function is_callable;
 
 class DataTransformer implements DataTransformerInterface
 {
-    protected const FILTER_TYPE_POPULATE = 'populate';
-    protected const FILTER_TYPE_EXTRACT = 'extract';
-
     protected ExtractorInterface $extractor;
     protected HydratorInterface $hydrator;
     protected MapsManager $mapsManager;
@@ -37,19 +32,16 @@ class DataTransformer implements DataTransformerInterface
     {
         $map = $this->mapsManager->getMap($class, $mapName);
         $dto = $map['refs'] ? $this->resolveRefPopulate($dto, $map['refs']) : $dto;
-        $dto = $map['pipe'] ? $this->applyPipes($dto, $map['pipe']) : $dto;
+        $dto = $map['pipe-populate'] ? $this->pipes($dto, $map['pipe-populate']) : $dto;
         return $this->hydrator->hydrate($dto, $class, $map['rules']);
     }
 
     public function toModelsCollection(string $model, iterable $dtoCollection, string $mapType = 'dto'): array
     {
-        $map = $this->mapsManager->getMap($model, $mapType);
-
         $models = [];
-        foreach ($dtoCollection as $dto) {
-            $dto = $map['refs'] ? $this->resolveRefPopulate($dto, $map['refs']) : $dto;
-            $dto = $map['pipe'] ? $this->applyPipes($dto, $map['pipe']) : $dto;
-            $models[] = $this->hydrator->hydrate($dto, $model, $map['rules']);
+        foreach ($dtoCollection as $key => $dto) {
+            $dto = $this->toModel($model, $dto, $mapType);
+            $models[$key] = $dto;
         }
 
         return $models;
@@ -59,7 +51,7 @@ class DataTransformer implements DataTransformerInterface
     {
         $map = $this->mapsManager->getMap($model::class, $mapName);
         $dto = $map['refs'] ? $this->resolveRefPopulate($dto, $map['refs']) : $dto;
-        $dto = $map['pipe'] ? $this->applyPipes($dto, $map['pipe']) : $dto;
+        $dto = $map['pipe-populate'] ? $this->pipes($dto, $map['pipe-populate']) : $dto;
         $this->hydrator->hydrateModel($dto, $model, $map['rules']);
 
         return $model;
@@ -86,7 +78,7 @@ class DataTransformer implements DataTransformerInterface
         }
 
         $dto = $this->extractor->extract($model, $map['rules']);
-        $dto = $map['pipe'] ? $this->applyPipes($dto, $map['pipe'], self::FILTER_TYPE_EXTRACT) : $dto;
+        $dto = $map['pipe-extract'] ? $this->pipes($dto, $map['pipe-extract']) : $dto;
         return $map['refs'] ? $this->resolveRefExtract($dto, $map['refs']) : $dto;
     }
 
@@ -124,28 +116,18 @@ class DataTransformer implements DataTransformerInterface
         return $dto;
     }
 
-    protected function applyPipes(array $dto, array $pipes, string $type = self::FILTER_TYPE_POPULATE): array
+    protected function pipes(array $dto, array $pipes): array
     {
         $fieldsPipes = array_intersect_key($pipes, $dto);
         foreach ($fieldsPipes as $name => $filters) {
             $value = $dto[$name] ?? null;
-            $dto[$name] = $this->applyFilters($value, $filters, $type);
+            foreach ($filters as $filter) {
+                $value = $filter($value);
+            }
+
+            $dto[$name] = $value;
         }
 
         return $dto;
-    }
-
-    protected function applyFilters($value, array $filters, string $type): mixed
-    {
-        foreach ($filters as $filter) {
-            if (is_callable($filter)) {
-                $value = $filter($value);
-                continue;
-            }
-
-            $value = ($filter[$type] ?? false) ? $filter[$type]($value) : $value;
-        }
-
-        return $value;
     }
 }

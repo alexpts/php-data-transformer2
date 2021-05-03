@@ -31,6 +31,8 @@
 представить в виде строки в формате ISO8601.
 
 ```php
+use PTS\DataTransformer\DataTransformer;
+
 $dataTransformer = new DataTransformer;
 $dataTransformer->getMapsManager()->setMapDir(UserModel::class, __DIR__ . '/data');
 
@@ -45,7 +47,7 @@ $dto = $dataTransformer->toDTO($model, 'dto');
 $dtoForDb = $dataTransformer->toDTO($model, 'db');
 ```
 
-А еще у нас может быть просто более компактное представлеиние этой же модели, без лишних деталей.
+А еще может быть просто более компактное представлеиние этой же модели, без лишних деталей.
 
 ```php
 $shortFormatDto = $dataTransformer->toDTO($model, 'short.dto');
@@ -59,7 +61,7 @@ $shortFormatDto = $dataTransformer->toDTO($model, 'short.dto');
 $mapName = 'dto';
 $excludedFields = ['name'];
 $dtoCollection = $dataTransformer->toDtoCollection($models, $mapName, [
-	'excludeFields' => $excludedFields
+    'excludeFields' => $excludedFields
 ]);
 ```
 
@@ -76,15 +78,14 @@ return [
     'name' => [],
     'login' => [],
     'active' => [
-        'pipe' => ['boolval']
+        'pipe-populate' => ['boolval'],
+        'pipe-extract' => ['boolval'],
     ],
     'email' => [
-    	 'pipe' => [
-    	 	[
-    	 		'populate' => 'strtolower', // any callable
-    	 		'extract' => 'strtoupper'
-    	 	]
-    	 ]
+        'pipe-populate' => [ // any callable
+            'strval',
+            'strtolower',
+         ]
     ],
     'refModel' => [
         'ref' => [
@@ -134,8 +135,8 @@ $model2 = $dataTransformer->toModel(UserModel::class, [
 ### Логика в pipe обработчиках
 
 Обработчики pipe позволяют описывать callable методы и писать любую логику, которая будет применяться к значению. В pipe
-фильтрах можно кастить типы например. Либо шифровать поля перед записью в БД. В случае необходимости, чтобы вся логика
-маппинга была в 1 месте, вы может прокинуть любые зависимости через замыкание в функцию pipe, доставл ее из контейнера.
+фильтрах можно кастить типы. Либо шифровать поля перед записью в БД. В случае необходимости, чтобы вся логика
+маппинга была в 1 месте, вы может прокинуть любые зависимости через замыкание в функцию pipe, достав ее из контейнера.
 
 ```php
 <?php
@@ -152,16 +153,22 @@ return [
     'creAt' => [],
     'name' => [],
     'password' => [
-        'pipe' => [
-            [
-                'extract' => function(string $openPassword) use($encrypter) {
-                        return $encrypter->encrypt($openPassword, false);
-                    },
-                    'populate' => static function(string $ePassword) use($encrypter) {
-                        return $encrypter->decrypt($ePassword, false);
-                    },
-                ]
-            ]
+        'pipe-populate' => [
+            'strtolower',
+            function(string $openPassword) use($encrypter) {
+                return $encrypter->encrypt($openPassword);
+            },
         ],
-
+        'pipe-extract' => [
+            function(string $ePassword) use($encrypter) {
+                return $encrypter->decrypt($ePassword);
+            },
+            'strtolower'
+        ],
 ];
+
+
+### migrates
+
+[update 5 to 6](https://github.com/alexpts/php-data-transformer2/blob/master/docs/migrate5to6.md)
+
