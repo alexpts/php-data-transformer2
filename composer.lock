@@ -8,25 +8,25 @@
     "packages": [
         {
             "name": "alexpts/php-hydrator",
-            "version": "4.0.0",
+            "version": "4.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/alexpts/php-hydrator.git",
-                "reference": "abc1c3e74d83d72d257082de21439aad0ec98d1a"
+                "reference": "6436c8e3212c93c58f588c6e39e7620c1b839f0f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/alexpts/php-hydrator/zipball/abc1c3e74d83d72d257082de21439aad0ec98d1a",
-                "reference": "abc1c3e74d83d72d257082de21439aad0ec98d1a",
+                "url": "https://api.github.com/repos/alexpts/php-hydrator/zipball/6436c8e3212c93c58f588c6e39e7620c1b839f0f",
+                "reference": "6436c8e3212c93c58f588c6e39e7620c1b839f0f",
                 "shasum": ""
             },
             "require": {
                 "php": "^8.0"
             },
             "require-dev": {
-                "blackfire/php-sdk": "^1.23",
+                "blackfire/php-sdk": "^1.25",
                 "fzaninotto/faker": "dev-master",
-                "phpunit/phpunit": "^9.4"
+                "phpunit/phpunit": "^9.5"
             },
             "type": "library",
             "autoload": {
@@ -56,9 +56,9 @@
             ],
             "support": {
                 "issues": "https://github.com/alexpts/php-hydrator/issues",
-                "source": "https://github.com/alexpts/php-hydrator/tree/4.0.0"
+                "source": "https://github.com/alexpts/php-hydrator/tree/4.0.1"
             },
-            "time": "2020-11-29T19:15:41+00:00"
+            "time": "2021-05-03T17:49:52+00:00"
         },
         {
             "name": "psr/container",
