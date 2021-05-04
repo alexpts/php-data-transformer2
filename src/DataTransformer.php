@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace PTS\DataTransformer;
 
@@ -95,14 +96,6 @@ class DataTransformer implements DataTransformerInterface
         return $dto;
     }
 
-    /**
-     * Рекурсиовно все refs модели создает
-     *
-     * @param array $dto
-     * @param array $refsRules
-     *
-     * @return array
-     */
     protected function resolveRefPopulate(array $dto, array $refsRules): array
     {
         foreach ($refsRules as $name => $rule) {
@@ -116,6 +109,12 @@ class DataTransformer implements DataTransformerInterface
         return $dto;
     }
 
+    /**
+     * @param array $dto
+     * @param callable[][] $pipes
+     *
+     * @return array - modified dto
+     */
     protected function pipes(array $dto, array $pipes): array
     {
         $fieldsPipes = array_intersect_key($pipes, $dto);
