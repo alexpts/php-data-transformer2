@@ -9,8 +9,9 @@
     "converter",
     "transform",
     "dto",
-    "data",
-    "mapper"
+    "data-mapper",
+    "hydrator",
+    "serializer"
   ],
   "authors": [
     {
