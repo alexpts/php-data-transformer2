@@ -5,6 +5,9 @@
 [![Code Climate](https://codeclimate.com/github/alexpts/php-data-transformer2/badges/gpa.svg)](https://codeclimate.com/github/alexpts/php-data-transformer2)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/alexpts/php-data-transformer2/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/alexpts/php-data-transformer2/?branch=master)
 
+Позволяет извлекать данные из объектов и создавать объекты из данных. Позволяет делать это по заранее опрелделенной схеме в обе стороны. Например извлечь данные из Model для записи в БД. Либо создать/заполнить Model данными из БД.
+
+
 ### Install
 
 `composer require alexpts/php-data-transformer2`
@@ -20,13 +23,11 @@
 
 ### Data Transformer
 
-Класс DataTransformer является более высокогоуровневым. Он позволяет работать с HydratorService и описывать схемы
+Класс DataTransformer является более высокоуровневым. Он позволяет работать с HydratorService и описывать схемы
 преобразования для каждого класса отдельно.
 
-Для одного класса может быть множество схем преобразования. Например для преобразования модели для сохранения в БД
-требуется преобразовать ее в DTO сущность. При этом все значения типа \DateTime преобразовать в timestamp. Но если мы
-передаем эту же модель на клиент через REST API, то схема преобразования может быть иной. Все значения \DateTime нужно
-представить в виде строки в формате ISO8601.
+Для одного класса может быть множество схем преобразования. Для преобразования модели для сохранения в БД
+требуется преобразовать ее в DTO сущность (массив php). При этом все значения типа \DateTime преобразовать в timestamp (integer тип). Если мы передаем эту же модель на клиент через REST API, то схема преобразования может быть иной. Все значения \DateTime нужно представить в виде строки в формате ISO8601.
 
 ```php
 use PTS\DataTransformer\DataTransformer;
@@ -36,7 +37,7 @@ $dataTransformer->getMapsManager()->setMapDir(UserModel::class, __DIR__ . '/data
 
 $model = $dataTransformer->toModel(UserModel::class, [
     'id' => 1,
-    'creAt' => new \DateTime,
+    'creAt' => new DateTime,
     'name' => 'Alex',
     'active' => 1,
 ]);
@@ -45,10 +46,21 @@ $dto = $dataTransformer->toDTO($model, 'dto');
 $dtoForDb = $dataTransformer->toDTO($model, 'db');
 ```
 
-А еще может быть просто более компактное представлеиние этой же модели, без лишних деталей.
+### Вариации представлений
+
+Может потребоваться для разных сценариев извлекать данные по разным правиоам из модели.
+Либо может быть просто более компактное представлеиние этой же модели, без лишних деталей. Можно использовать несколько схем для 1 модели, например `short.dto`:
 
 ```php
 $shortFormatDto = $dataTransformer->toDTO($model, 'short.dto');
+```
+
+Также можно исключить часть полей, без необъодимости определять новую схему/map для преобразования, указав при вызовы опцию `excludeFields` с массивом игнорируемых полей в схеме:
+
+```php
+$shortFormatDto = $dataTransformer->toDTO($model, 'dto', [
+     'excludeFields' => ['password']
+]);
 ```
 
 ### Коллекция моделей
@@ -58,15 +70,12 @@ $shortFormatDto = $dataTransformer->toDTO($model, 'short.dto');
 ```php
 $mapName = 'dto';
 $excludedFields = ['name'];
-$dtoCollection = $dataTransformer->toDtoCollection($models, $mapName, [
-    'excludeFields' => $excludedFields
-]);
+$dtoCollection = $dataTransformer->toDtoCollection($models, $mapName);
 ```
 
 ### Вложенные модели
 
-Если свойство модели представлено другой моделью или коллекцией моделей, то можно рекурсивно извлечь/заполнить модель.
-Для этого в схеме маппинга нужно использовать ключ `ref`.
+Если свойство модели представлено другой моделью или коллекцией моделей, то можно рекурсивно извлечь/заполнить модель. Для этого в схеме маппинга нужно использовать ключ `ref`.
 
 ```php
 // map file deepDto.php
@@ -103,7 +112,7 @@ return [
 // code file
 $model = $dataTransformer->toModel(UserModel::class, [
     'id' => 1,
-    'creAt' => new \DateTime,
+    'creAt' => new DateTime,
     'name' => 'Alex',
     'active' => 1,
     'refModel' => [
@@ -114,7 +123,7 @@ $model = $dataTransformer->toModel(UserModel::class, [
 
 $model2 = $dataTransformer->toModel(UserModel::class, [
     'id' => 1,
-    'creAt' => new \DateTime,
+    'creAt' => new DateTime,
     'name' => 'Alex',
     'active' => 1,
     'refModels' => [ // collection ref models
@@ -132,9 +141,7 @@ $model2 = $dataTransformer->toModel(UserModel::class, [
 
 ### Логика в pipe обработчиках
 
-Обработчики pipe позволяют описывать callable методы и писать любую логику, которая будет применяться к значению. В pipe
-фильтрах можно кастить типы. Либо шифровать поля перед записью в БД. В случае необходимости, чтобы вся логика
-маппинга была в 1 месте, вы может прокинуть любые зависимости через замыкание в функцию pipe, достав их из контейнера.
+Обработчики pipe позволяют описывать callable методы и писать любую логику, которая будет применяться к значению. В pipe обработчиках можно кастить типы. Либо шифровать поля перед записью в БД. В случае необходимости, чтобы вся логика маппинга была в 1 месте, вы может прокинуть любые зависимости через замыкание в функцию pipe, достав их из контейнера `$this->getContainer()`.
 
 ```php
 <?php
@@ -163,11 +170,10 @@ return [
             },
             'strtolower'
         ],
+    ]
 ];
 ```
 
 ### migration
 
 [update 5 to 6](https://github.com/alexpts/php-data-transformer2/blob/master/docs/migrate5to6.md)
-
-
