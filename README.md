@@ -1,9 +1,7 @@
 # php-data-transformer2
 
-[![Build Status](https://travis-ci.org/alexpts/php-data-transformer2.svg?branch=master)](https://travis-ci.org/alexpts/php-data-transformer2)
-[![Code Coverage](https://scrutinizer-ci.com/g/alexpts/php-data-transformer2/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/alexpts/php-data-transformer2/?branch=master)
-[![Code Climate](https://codeclimate.com/github/alexpts/php-data-transformer2/badges/gpa.svg)](https://codeclimate.com/github/alexpts/php-data-transformer2)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/alexpts/php-data-transformer2/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/alexpts/php-data-transformer2/?branch=master)
+[![phpunit](https://github.com/alexpts/php-data-transformer2/actions/workflows/phpunit.yml/badge.svg?branch=master)](https://github.com/alexpts/php-data-transformer2/actions/workflows/phpunit.yml)
+[![codecov](https://codecov.io/gh/alexpts/php-data-transformer2/branch/master/graph/badge.svg?token=14L6IJA5UE)](https://codecov.io/gh/alexpts/php-data-transformer2)
 
 Позволяет извлекать данные из объектов и создавать объекты из данных. Позволяет делать это по заранее опрелделенной схеме в обе стороны. Например извлечь данные из Model для записи в БД. Либо создать/заполнить Model данными из БД.
 
