@@ -30,8 +30,10 @@
   },
   "require-dev": {
     "fzaninotto/faker": "dev-master",
-    "phpunit/phpunit": "^9.5",
-    "blackfire/php-sdk": "^1.29"
+    "phpunit/phpunit": "^9.5"
+  },
+  "suggest": {
+    "blackfire/php-sdk": "^1.30"
   },
   "autoload": {
     "psr-4": {
