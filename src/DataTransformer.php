@@ -101,8 +101,9 @@ class DataTransformer implements DataTransformerInterface
         foreach ($refsRules as $name => $rule) {
             $value = $dto[$name] ?? null;
             if ($value !== null) {
-                $method = ($rule['collection'] ?? false) ? 'toModelsCollection' : 'toModel';
-                $dto[$name] = $this->{$method}($rule['model'], $value, $rule['map']);
+                $dto[$name] = ($rule['collection'] ?? false)
+                    ? $this->toModelsCollection($rule['model'], $value, $rule['map'])
+                    : $this->toModel($rule['model'], $value, $rule['map']);
             }
         }
 
