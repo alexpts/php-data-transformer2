@@ -24,7 +24,7 @@
   },
   "minimum-stability": "stable",
   "require": {
-    "php": "^8.1",
+    "php": ">=8.1",
     "psr/container": "^2.0",
     "alexpts/php-hydrator": "^5.0"
   },

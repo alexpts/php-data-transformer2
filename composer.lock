@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6ddee2c3515738512203282775c8aac3",
+    "content-hash": "8a353f4b31964b9b26e0d4ee15823002",
     "packages": [
         {
             "name": "alexpts/php-hydrator",
@@ -1913,7 +1913,7 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": "^8.1"
+        "php": ">=8.1"
     },
     "platform-dev": [],
     "plugin-api-version": "2.3.0"
